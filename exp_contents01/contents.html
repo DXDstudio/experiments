@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>experiment contents page main</title>
+  <!-- p5.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      display: block;
+      position: static;
+      /* width, height는 p5가 알아서 */
+      /*box-shadow: 0 0 16px #0002;*/
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <script>
+        let img;
+
+        function preload() {
+        img = loadImage('test.png');
+        }
+
+        function setup() {
+        createCanvas(img.width, img.height);
+        noStroke();
+        img.loadPixels();
+        }
+
+        function draw() {
+        background(0);
+
+        let amp = map(mouseX, 0, img.width, 0, 100); // 기존대로 마우스X로 진폭 조절
+        let freqMid = map(mouseX, 0, img.width, 0, 0.0001); // 중앙에서의 freq (넉넉)
+        let freqEnd = map(mouseX, 0, img.width, 0, 0.04); // 양 끝에서의 freq (조밀)
+
+        loadPixels();
+        pixelDensity(1);
+
+        for (let x = 0; x < img.width; x++) {
+            // x가 중앙에서 멀수록 freq가 커짐 (포물선 분포)
+            let t = Math.abs((x - img.width / 2) / (img.width / 2)); // 0(중앙) ~ 1(양끝)
+            let freq = lerp(freqMid, freqEnd, t);
+
+            let envelope = sin(map(x, 0, img.width, 0, PI));
+            let s = sin(x * freq);
+            let wave = Math.abs(s);
+            wave = 1 - wave;
+            let offset = int(wave * amp);
+
+            for (let y = 0; y < img.height; y++) {
+            let srcY = y - offset - int((1 - envelope) * amp);
+            if (srcY >= 0) {
+                let srcIdx = 4 * (srcY * img.width + x);
+                let dstIdx = 4 * (y * width + x);
+
+                pixels[dstIdx + 0] = img.pixels[srcIdx + 0] + offset / 1.5;
+                pixels[dstIdx + 1] = img.pixels[srcIdx + 1] + offset / 1.5;
+                pixels[dstIdx + 2] = img.pixels[srcIdx + 2] + offset / 1.5;
+                pixels[dstIdx + 3] = img.pixels[srcIdx + 3];
+            } else {
+                let dstIdx = 4 * (y * width + x);
+                pixels[dstIdx + 0] = 255;
+                pixels[dstIdx + 1] = 255;
+                pixels[dstIdx + 2] = 255;
+                pixels[dstIdx + 3] = 255;
+            }
+            }
+        }
+
+        updatePixels();
+        }
+  </script>
+</body>
+</html>
