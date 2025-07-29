@@ -69,8 +69,9 @@ window.onload = function() {
     throw new Error('Rendering to floating-point textures is required but not supported');
   }
 
-  for (var i = 0; i < 20; i++) {
-    water.addDrop(Math.random() * 2 - 1, Math.random() * 2 - 1, 0.03, (i & 1) ? 0.01 : -0.01);
+  for (var i = 0; i < 10; i++) {
+    water.addDrop(Math.random() * 2 - 1, Math.random() * 2 - 1, 0.03, (i & 1) ? 0.01 : -0.03);
+   
   }
 
   document.getElementById('loading').innerHTML = '';

@@ -125,7 +125,7 @@ function Renderer() {
           normal = -normal;\
           vec3 reflectedRay = reflect(incomingRay, normal);\
           vec3 refractedRay = refract(incomingRay, normal, IOR_WATER / IOR_AIR);\
-          float fresnel = mix(0.5, 1.0, pow(1.0 - dot(normal, -incomingRay), 3.0));\
+          float fresnel = mix(0.005, 1.0, pow(1.0 - dot(normal, -incomingRay), 2.0));\
           \
           vec3 reflectedColor = getSurfaceRayColor(position, reflectedRay, underwaterColor);\
           vec3 refractedColor = getSurfaceRayColor(position, refractedRay, vec3(1.0)) * vec3(0.8, 1.0, 1.1);\
@@ -134,7 +134,7 @@ function Renderer() {
         ' : /* above water */ '\
           vec3 reflectedRay = reflect(incomingRay, normal);\
           vec3 refractedRay = refract(incomingRay, normal, IOR_AIR / IOR_WATER);\
-          float fresnel = mix(0.25, 1.0, pow(1.0 - dot(normal, -incomingRay), 3.0));\
+          float fresnel = mix(0.005, 1.0, pow(1.0 - dot(normal, -incomingRay), 2.0));\
           \
           vec3 reflectedColor = getSurfaceRayColor(position, reflectedRay, abovewaterColor);\
           vec3 refractedColor = getSurfaceRayColor(position, refractedRay, abovewaterColor);\
